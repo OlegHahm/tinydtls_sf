@@ -28,12 +28,12 @@
 #include "debug.h"
 
 #ifndef WITH_CONTIKI
-void peer_init()
+void peer_init(void)
 {
 }
 
 static inline dtls_peer_t *
-dtls_malloc_peer() {
+dtls_malloc_peer(void) {
   return (dtls_peer_t *)malloc(sizeof(dtls_peer_t));
 }
 

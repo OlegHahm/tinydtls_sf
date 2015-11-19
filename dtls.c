@@ -140,7 +140,7 @@ PROCESS(dtls_retransmit_process, "DTLS retransmit process");
 static dtls_context_t the_dtls_context;
 
 static inline dtls_context_t *
-malloc_context() {
+malloc_context(void) {
   return &the_dtls_context;
 }
 
@@ -151,7 +151,7 @@ free_context(dtls_context_t *context) {
 #else /* WITH_CONTIKI */
 
 static inline dtls_context_t *
-malloc_context() {
+malloc_context(void) {
   return (dtls_context_t *)malloc(sizeof(dtls_context_t));
 }
 
@@ -162,7 +162,7 @@ free_context(dtls_context_t *context) {
 #endif
 
 void
-dtls_init() {
+dtls_init(void) {
   dtls_clock_init();
   crypto_init();
   netq_init();

@@ -50,16 +50,16 @@
 
 static int maxlog = DTLS_LOG_WARN;	/* default maximum log level */
 
-const char *dtls_package_name() {
+const char *dtls_package_name(void) {
   return PACKAGE_NAME;
 }
 
-const char *dtls_package_version() {
+const char *dtls_package_version(void) {
   return PACKAGE_VERSION;
 }
 
 log_t 
-dtls_get_log_level() {
+dtls_get_log_level(void) {
   return maxlog;
 }
 
