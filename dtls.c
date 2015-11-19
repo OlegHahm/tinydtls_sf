@@ -290,7 +290,7 @@ dtls_create_cookie(dtls_context_t *ctx,
 		   uint8 *msg, size_t msglen,
 		   uint8 *cookie, int *clen) {
   unsigned char buf[DTLS_HMAC_MAX];
-  size_t len, e;
+  ssize_t len, e;
 
   /* create cookie with HMAC-SHA256 over:
    * - SECRET
@@ -933,7 +933,8 @@ static int
 dtls_update_parameters(dtls_context_t *ctx, 
 		       dtls_peer_t *peer,
 		       uint8 *data, size_t data_length) {
-  int i, j;
+  int i;
+  unsigned j;
   int ok;
   dtls_handshake_parameters_t *config = peer->handshake_params;
   dtls_security_parameters_t *security = dtls_security_params(peer);
@@ -1006,7 +1007,7 @@ dtls_update_parameters(dtls_context_t *ctx,
   data_length -= sizeof(uint8) + i;
 
   ok = 0;
-  while (i && !ok) {
+  while ((unsigned) i && !ok) {
     for (j = 0; j < sizeof(compression_methods) / sizeof(uint8); ++j)
       if (dtls_uint8_to_int(data) == compression_methods[j]) {
 	config->compression = compression_methods[j];
@@ -1513,7 +1514,7 @@ dtls_send_multi(dtls_context_t *ctx, dtls_peer_t *peer,
   /* Guess number of bytes application data actually sent:
    * dtls_prepare_record() tells us in len the number of bytes to
    * send, res will contain the bytes actually sent. */
-  return res <= 0 ? res : overall_len - (len - res);
+  return res <= 0 ? res : (int) (overall_len - (len - res));
 }
 
 static inline int
@@ -1861,7 +1862,7 @@ dtls_send_server_hello(dtls_context_t *ctx, dtls_peer_t *peer)
     p += sizeof(uint8);
   }
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   /* TODO use the same record sequence number as in the ClientHello,
      see 4.2.1. Denial-of-Service Countermeasures */
@@ -1897,7 +1898,7 @@ dtls_send_certificate_ecdsa(dtls_context_t *ctx, dtls_peer_t *peer,
   memcpy(p, key->pub_key_y, DTLS_EC_KEY_SIZE);
   p += DTLS_EC_KEY_SIZE;
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   return dtls_send_handshake_msg(ctx, peer, DTLS_HT_CERTIFICATE,
 				 buf, p - buf);
@@ -2017,7 +2018,7 @@ dtls_send_server_key_exchange_ecdh(dtls_context_t *ctx, dtls_peer_t *peer,
 
   p = dtls_add_ecdsa_signature_elem(p, point_r, point_s);
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   return dtls_send_handshake_msg(ctx, peer, DTLS_HT_SERVER_KEY_EXCHANGE,
 				 buf, p - buf);
@@ -2047,7 +2048,7 @@ dtls_send_server_key_exchange_psk(dtls_context_t *ctx, dtls_peer_t *peer,
   memcpy(p, psk_hint, len);
   p += len;
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   return dtls_send_handshake_msg(ctx, peer, DTLS_HT_SERVER_KEY_EXCHANGE,
 				 buf, p - buf);
@@ -2090,7 +2091,7 @@ dtls_send_server_certificate_request(dtls_context_t *ctx, dtls_peer_t *peer)
   dtls_int_to_uint16(p, 0);
   p += sizeof(uint16);
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   return dtls_send_handshake_msg(ctx, peer, DTLS_HT_CERTIFICATE_REQUEST,
 				 buf, p - buf);
@@ -2270,7 +2271,7 @@ dtls_send_client_key_exchange(dtls_context_t *ctx, dtls_peer_t *peer)
     return dtls_alert_fatal_create(DTLS_ALERT_INTERNAL_ERROR);
   }
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   return dtls_send_handshake_msg(ctx, peer, DTLS_HT_CLIENT_KEY_EXCHANGE,
 				 buf, p - buf);
@@ -2306,7 +2307,7 @@ dtls_send_certificate_verify_ecdh(dtls_context_t *ctx, dtls_peer_t *peer,
 
   p = dtls_add_ecdsa_signature_elem(p, point_r, point_s);
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   return dtls_send_handshake_msg(ctx, peer, DTLS_HT_CERTIFICATE_VERIFY,
 				 buf, p - buf);
@@ -2338,7 +2339,7 @@ dtls_send_finished(dtls_context_t *ctx, dtls_peer_t *peer,
 
   p += DTLS_FIN_LENGTH;
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   return dtls_send_handshake_msg(ctx, peer, DTLS_HT_FINISHED,
 				 buf, p - buf);
@@ -2486,7 +2487,7 @@ dtls_send_client_hello(dtls_context_t *ctx, dtls_peer_t *peer,
     p += sizeof(uint8);
   }
 
-  assert(p - buf <= sizeof(buf));
+  assert(p - buf <= (ssize_t) sizeof(buf));
 
   if (cookie_length != 0)
     clear_hs_hash(peer);
