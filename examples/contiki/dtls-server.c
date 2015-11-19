@@ -44,7 +44,7 @@
 #endif
 #include "net/ip/uip-debug.h"
 
-#include "debug.h"
+#include "tinydtls_debug.h"
 #include "dtls.h"
 
 #ifdef ENABLE_POWERTRACE

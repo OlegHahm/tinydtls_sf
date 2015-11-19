@@ -42,7 +42,7 @@
 #endif
 
 #include "global.h"
-#include "debug.h"
+#include "tinydtls_debug.h"
 
 #ifndef min
 #define min(a,b) ((a) < (b) ? (a) : (b))

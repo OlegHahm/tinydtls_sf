@@ -38,7 +38,7 @@
 #include "uthash.h"
 #endif /* WITH_CONTIKI */
 
-#include "debug.h"
+#include "tinydtls_debug.h"
 #include "numeric.h"
 #include "netq.h"
 #include "dtls.h"

@@ -36,7 +36,7 @@
 #endif
 
 #include "global.h"
-#include "debug.h"
+#include "tinydtls_debug.h"
 #include "numeric.h"
 #include "dtls.h"
 #include "crypto.h"

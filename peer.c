@@ -25,7 +25,7 @@
 
 #include "global.h"
 #include "peer.h"
-#include "debug.h"
+#include "tinydtls_debug.h"
 
 #ifndef WITH_CONTIKI
 void peer_init(void)
