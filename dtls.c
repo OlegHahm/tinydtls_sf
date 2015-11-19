@@ -633,6 +633,7 @@ calculate_key_block(dtls_context_t *ctx,
 		    dtls_peer_t *peer,
 		    session_t *session,
 		    dtls_peer_type role) {
+  (void) role;
   unsigned char *pre_master_secret;
   int pre_master_len = 0;
   dtls_security_parameters_t *security = dtls_security_params_next(peer);
@@ -1038,6 +1039,7 @@ check_client_keyexchange(dtls_context_t *ctx,
 			 dtls_handshake_parameters_t *handshake,
 			 uint8 *data, size_t length) {
 
+  (void) ctx;
 #ifdef DTLS_ECC
   if (is_tls_ecdhe_ecdsa_with_aes_128_ccm_8(handshake->cipher)) {
 
@@ -1135,6 +1137,7 @@ clear_hs_hash(dtls_peer_t *peer) {
 static int
 check_finished(dtls_context_t *ctx, dtls_peer_t *peer,
 	       uint8 *data, size_t data_length) {
+  (void) ctx;
   size_t digest_length, label_size;
   const unsigned char *label;
   unsigned char buf[DTLS_HMAC_MAX];
@@ -1728,6 +1731,7 @@ check_client_certificate_verify(dtls_context_t *ctx,
 				dtls_peer_t *peer,
 				uint8 *data, size_t data_length)
 {
+  (void) ctx;
   dtls_handshake_parameters_t *config = peer->handshake_params;
   int ret;
   unsigned char *result_r;
@@ -2636,6 +2640,7 @@ check_server_key_exchange_ecdsa(dtls_context_t *ctx,
 				dtls_peer_t *peer,
 				uint8 *data, size_t data_length)
 {
+  (void) ctx;
   dtls_handshake_parameters_t *config = peer->handshake_params;
   int ret;
   unsigned char *result_r;
@@ -2719,6 +2724,7 @@ check_server_key_exchange_psk(dtls_context_t *ctx,
 			      dtls_peer_t *peer,
 			      uint8 *data, size_t data_length)
 {
+  (void) ctx;
   dtls_handshake_parameters_t *config = peer->handshake_params;
   uint16_t len;
 
@@ -2758,6 +2764,7 @@ check_certificate_request(dtls_context_t *ctx,
 			  dtls_peer_t *peer,
 			  uint8 *data, size_t data_length)
 {
+  (void) ctx;
   unsigned int i;
   int auth_alg;
   int sig_alg;
@@ -3504,6 +3511,7 @@ static int
 handle_ccs(dtls_context_t *ctx, dtls_peer_t *peer, 
 	   uint8 *record_header, uint8 *data, size_t data_length)
 {
+  (void) record_header;
   int err;
   dtls_handshake_parameters_t *handshake = peer->handshake_params;
 
@@ -3542,6 +3550,7 @@ handle_ccs(dtls_context_t *ctx, dtls_peer_t *peer,
 static int
 handle_alert(dtls_context_t *ctx, dtls_peer_t *peer, 
 	     uint8 *record_header, uint8 *data, size_t data_length) {
+  (void) record_header;
   int free_peer = 0;		/* indicates whether to free peer */
 
   if (data_length < 2)
