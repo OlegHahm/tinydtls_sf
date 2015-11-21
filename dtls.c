@@ -3252,7 +3252,9 @@ handle_handshake_msg(dtls_context_t *ctx, dtls_peer_t *peer, session_t *session,
 
   case DTLS_HT_CLIENT_HELLO:
 
-    if ((peer && state != DTLS_STATE_CONNECTED && state != DTLS_STATE_WAIT_CLIENTHELLO) ||
+    if ((peer && state != DTLS_STATE_CONNECTED &&
+                 state != DTLS_STATE_WAIT_CLIENTHELLO &&
+                 state != DTLS_STATE_WAIT_CLIENTHELLO_COOKIE) ||
 	(!peer && state != DTLS_STATE_WAIT_CLIENTHELLO)) {
       return dtls_alert_fatal_create(DTLS_ALERT_UNEXPECTED_MESSAGE);
     }
@@ -3314,6 +3316,8 @@ handle_handshake_msg(dtls_context_t *ctx, dtls_peer_t *peer, session_t *session,
       security = dtls_security_params(peer);
       security->rseq = 1;
       dtls_add_peer(ctx, peer);
+      peer->state = DTLS_STATE_WAIT_CLIENTHELLO_COOKIE;
+      return 0;
     }
     if (peer && !peer->handshake_params) {
       dtls_handshake_header_t *hs_header = DTLS_HANDSHAKE_HEADER(data);
@@ -3348,11 +3352,13 @@ handle_handshake_msg(dtls_context_t *ctx, dtls_peer_t *peer, session_t *session,
     if (err < 0) {
       return err;
     }
-    if (is_tls_ecdhe_ecdsa_with_aes_128_ccm_8(peer->handshake_params->cipher) &&
-	is_ecdsa_client_auth_supported(ctx))
-      peer->state = DTLS_STATE_WAIT_CLIENTCERTIFICATE;
-    else
-      peer->state = DTLS_STATE_WAIT_CLIENTKEYEXCHANGE;
+    if (peer->state == DTLS_STATE_WAIT_CLIENTHELLO_COOKIE) {
+        if (is_tls_ecdhe_ecdsa_with_aes_128_ccm_8(peer->handshake_params->cipher) &&
+                is_ecdsa_client_auth_supported(ctx))
+            peer->state = DTLS_STATE_WAIT_CLIENTCERTIFICATE;
+        else
+            peer->state = DTLS_STATE_WAIT_CLIENTKEYEXCHANGE;
+    }
 
     /* after sending the ServerHelloDone, we expect the
      * ClientKeyExchange (possibly containing the PSK id),
